@@ -1,4 +1,4 @@
-#  We ensure proper path handling in Python
+#  Cargar librerias
 import Definitions
 import os
 import numpy as np
@@ -7,18 +7,21 @@ import streamlit as st
 
 from src.ModelController import ModelController
 
-### Setup and configuration
+### Setup y configuración
 
 st.set_page_config(
-    layout="centered", page_title="Clasificador ODS", page_icon="🌱"
+    layout="centered", page_title="Clasificador ODS", page_icon="🌍"
 )
 
-### My vars
+### variables
 
 ctrl = ModelController()
 
-st.title("🌱 Clasificador de Textos ODS")
-st.caption("📌 **Proyecto MAIA - MLNS (2026/09/20)**  |  Desarrollado por **Yuliana Delgado Osorio** y **Luz Dary González González**")
+st.title("🌍 Clasificador de Textos ODS")
+st.markdown(
+    "📌 **Microproyecto 2 MAIA - MLNS (2026/09/20)**\n\n"
+    "### 👩‍💻 Desarrollado por: **Yuliana Delgado Osorio** y **Luz Dary González González**"
+)
 
 # Resumen del contexto y objetivo
 with st.expander("ℹ️ Contexto y Objetivo del Proyecto (Agenda 2030 / UNFPA)"):
@@ -28,16 +31,16 @@ with st.expander("ℹ️ Contexto y Objetivo del Proyecto (Agenda 2030 / UNFPA)"
     * **Objetivo:** Desarrollar una solución basada en *Natural Language Processing (NLP)* y *Machine Learning* para automatizar la clasificación semántica de textos hacia los 17 ODS, facilitando la toma de decisiones informadas.
     """)
 
-# 🖼️ IMAGEN / PRINT SCREEN EN LA PANTALLA DE CARGA DE DATOS
+# 🖼️ IMAGEN 
 img_path = os.path.join(Definitions.ROOT_DIR, "resources/images/presentacion.png")
 if os.path.exists(img_path):
     st.image(
         img_path, 
         caption="Referencia / Descripción de los ODS", 
-        width=500
+        use_container_width=True
     )
 elif os.path.exists("presentacion.png"):
-    st.image("presentacion.png", caption="Referencia / Descripción de los ODS", width=500)
+    st.image("presentacion.png", caption="Referencia / Descripción de los ODS", use_container_width=True)
 
 st.divider()
 
@@ -49,11 +52,11 @@ with st.expander("📂 Sobre el archivo de datos (`Datos_textosODS.xlsx`)"):
     * **Requisito del archivo:** El `.xlsx` debe contener las columnas `textos` y `ODS` para realizar la evaluación comparativa.
     """)
 
-### My UI starting here
+### UI
 
 with st.form(key="my_form"):
     uploaded_file = st.file_uploader(
-        "Elige un archivo Excel (.xlsx)",
+        "Selecciona el archivo Excel para evaluar (.xlsx)",
         accept_multiple_files=False,
         type="xlsx",
     )
@@ -66,14 +69,14 @@ if submit_button and uploaded_file is not None:
 input_df = st.session_state.get("input_df")
 
 if input_df is not None:
-    st.caption("✅ Estos son tus datos")
+    st.caption("✅ Estos son los datos del archivo")
     event = st.dataframe(
         input_df,
         on_select="rerun",
         selection_mode="single-row",
         use_container_width=True,
     )
-    st.caption("▶ Por favor, selecciona una fila")
+    st.caption("▶ Por favor, selecciona una fila para correr el modelo")
 
     if event is not None and event.selection.rows:
         current_row_index = event.selection.rows[0]
@@ -104,7 +107,6 @@ if input_df is not None:
 
         with col2:
             st.caption("🎯 Comparativa")
-            # Reemplazado st.metric por markdown legible
             st.markdown(f"**Valor Real:**\n{Y_real_full}")
             if Y_real_raw != "N/A":
                 match = Y_real_raw.strip() == Y_pred_raw.strip()
@@ -148,7 +150,7 @@ if input_df is not None:
 
         st.divider()
         st.caption(
-            "Modelo: TF-IDF (min_df=3, max_df=0.85, 12000 términos) → TruncatedSVD (k=150) → "
+            "Modelo: TF-IDF (min_df=3, max_df=0.85, max_features=12.000, ngram_range=(1, 2), sublinear_tf=True) → TruncatedSVD (k=150) → "
             "LogisticRegression con búsqueda de hiperparámetros (GridSearchCV, F1-macro). "
             "Entrenado sobre el OSDG Community Dataset (subconjunto en español, 9656 textos, ODS 1-16)."
         )

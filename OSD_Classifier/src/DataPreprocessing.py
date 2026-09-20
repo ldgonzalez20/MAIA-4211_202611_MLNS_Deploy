@@ -34,7 +34,8 @@ class DataPreprocessing:
     def get_categories(self):
         return [str(i) for i in range(1, 18)]
 
+  
     def get_cat_name(self, index_or_code):
         print("DataPreprocessing.get_cat_name ->")
-        code_str = str(index_or_code).strip()
+        code_str = str(index_or_code).replace('.0', '').strip()
         return self.ODS_DICC.get(code_str, "Desconocido")
