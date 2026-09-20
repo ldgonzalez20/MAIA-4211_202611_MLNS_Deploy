@@ -21,7 +21,7 @@ ctrl = ModelController()
 with st.form(key="my_form"):
 
     uploaded_file = st.file_uploader(
-        "Choose a CSV file", accept_multiple_files=False, type="csv"
+        "Choose a xlsx file", accept_multiple_files=False, type="xlsx"
     )
 
     submit_button = st.form_submit_button(label="Submit")
