@@ -1,8 +1,8 @@
 #  We ensure proper path handling in Python
 import Definitions
 import os
+import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import streamlit as st
 
 from src.ModelController import ModelController
@@ -37,7 +37,7 @@ if os.path.exists(img_path):
         width=500
     )
 elif os.path.exists("presentacion.png"):
-    st.image("presentacion.png", caption="Referencia / Descripción de los ODS", use_container_width=True)
+    st.image("presentacion.png", caption="Referencia / Descripción de los ODS", width=500)
 
 st.divider()
 
@@ -104,7 +104,8 @@ if input_df is not None:
 
         with col2:
             st.caption("🎯 Comparativa")
-            st.metric("Real", Y_real_full)
+            # Reemplazado st.metric por markdown legible
+            st.markdown(f"**Valor Real:**\n{Y_real_full}")
             if Y_real_raw != "N/A":
                 match = Y_real_raw.strip() == Y_pred_raw.strip()
                 st.markdown(
