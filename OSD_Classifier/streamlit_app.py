@@ -50,7 +50,7 @@ if input_df is not None:
         # Obtén el nombre de las clases
         class_names = ctrl.get_categories()
 
-        col1, col2 = st.columns()  
+        col1, col2 = st.columns(2) 
 
         with col1:
             st.caption("🗣 Your Prediction")
