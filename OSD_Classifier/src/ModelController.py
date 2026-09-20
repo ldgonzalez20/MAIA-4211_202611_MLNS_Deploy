@@ -1,11 +1,11 @@
-import Definitions
-import numpy as np
-import os.path as osp
+import io
 import pandas as pd
-from io import StringIO
+import os.path as osp
+import Definitions
 import joblib
-
 from src.DataPreprocessing import DataPreprocessing
+
+
 
 class ModelController:
    # Diccionario de ODS
@@ -49,16 +49,21 @@ class ModelController:
         # Clases u ODS disponibles (ej. 1 a 17 o las etiquetas únicas de tus datos)
         return [str(i) for i in range(1, 18)]
 
-    def load_input_data(self, input_data):
+    def load_input_data(self, uploaded_file):
         print("ModelController.load_input_data ->")
         try:
-            # Leer archivo Excel usando pandas directamente
-            self.input_df = pd.read_excel(input_data)
+            # Asegurar que el puntero del archivo esté al inicio
+            if hasattr(uploaded_file, 'seek'):
+                uploaded_file.seek(0)
+                
+            # Leer el archivo Excel de manera segura
+            self.input_df = pd.read_excel(io.BytesIO(uploaded_file.read()))
             is_valid = self.validate_data(self.input_df)
             return self.input_df, is_valid
+
         except Exception as e:
-            print(f"Error al leer Excel: {e}")
-            raise ValueError("Ocurrió un error al leer la información de entrada desde Excel")
+            print(f"Error detallado al leer Excel: {e}")
+            raise ValueError(f"Ocurrió un error al leer la información de entrada: {e}")
 
     # Traer la descripción del ODS
     def get_ods_description(self, code):
