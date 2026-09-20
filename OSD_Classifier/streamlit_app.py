@@ -34,7 +34,7 @@ if os.path.exists(img_path):
     st.image(
         img_path, 
         caption="Referencia / Descripción de los ODS", 
-        use_container_width=True
+        with = 500
     )
 elif os.path.exists("presentacion.png"):
     st.image("presentacion.png", caption="Referencia / Descripción de los ODS", use_container_width=True)

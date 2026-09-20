@@ -37,7 +37,7 @@ class ModelController:
         self.d_processing = DataPreprocessing()
 
     def get_ods_description(self, code):
-        code_str = str(code).strip()
+        code_str = str(code).replace('.0', '').strip()
         name = self.ODS_DICC.get(code_str, "Desconocido")
         return f"ODS {code_str}: {name}" if name != "Desconocido" else f"ODS {code_str}"
 
@@ -62,11 +62,11 @@ class ModelController:
 
     def predict(self, current_row):
         text_content = str(current_row['textos'])
-        Y_real_raw = str(current_row['ODS']) if 'ODS' in current_row else "N/A"
+        Y_real_raw = str(current_row['ODS']).replace('.0', '').strip() if 'ODS' in current_row else "N/A"
         
         X_tfidf = self.tfidf.transform([text_content])
         X_reduced = self.svd.transform(X_tfidf)
-        y_pred_raw = str(self.classifier.predict(X_reduced)[0])
+        y_pred_raw = str(self.classifier.predict(X_reduced)[0]).replace('.0', '').strip()
         
         Y_real_full = self.get_ods_description(Y_real_raw) if Y_real_raw != "N/A" else "N/A"
         y_pred_full = self.get_ods_description(y_pred_raw)
@@ -83,7 +83,7 @@ class ModelController:
         probs = None
         if hasattr(self.classifier, "predict_proba"):
             probs_array = self.classifier.predict_proba(X_reduced)[0]
-            classes = self.classifier.classes_
+            classes = [str(c).replace('.0', '').strip() for c in self.classifier.classes_]
             probs = {str(c): float(p) for c, p in zip(classes, probs_array)}
             
         meta = {
